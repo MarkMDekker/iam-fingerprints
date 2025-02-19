@@ -170,3 +170,8 @@ cython_debug/
 #.idea/
 requirements_old.txt
 Data/xr_variables_reference.nc
+Data/xr_indicators.nc
+Data/xr_variables.nc
+Figures/Indicators.html
+Figures/VariableData_norm.html
+Figures/VariableData.html

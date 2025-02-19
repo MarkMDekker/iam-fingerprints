@@ -4,12 +4,10 @@
 # =========================================================== #
 
 from pathlib import Path
-from tqdm import tqdm
 import pandas as pd
 import numpy as np
 import xarray as xr
 import yaml
-import pyam
 import plotly.express as px
 import os
 import plotly.graph_objects as go
@@ -24,7 +22,7 @@ class class_plotting:
 
     def __init__(self):
         print('STARTING PLOTTING')
-        with open("config.yaml", "r") as stream:
+        with open(Path(__file__).parent / "config.yaml", "r") as stream:
             self.settings = yaml.load(stream, Loader=yaml.Loader)
         self.xr_data = xr.open_dataset('Data/xr_variables.nc').sel(Region=self.settings['regions'])
         self.xr_ind = xr.open_dataset('Data/xr_indicators.nc').sel(Region=self.settings['regions'])
@@ -34,24 +32,24 @@ class class_plotting:
         self.model_ind = [x for x in self.models_all if x not in self.models_ref][0]
         filename = 'MyScenario.csv'
         try:
-            df = pd.read_csv("Data/"+filename,
+            df = pd.read_csv(Path(__file__).parent / "Data" / filename,
                                 quotechar='"',
                                 delimiter=',',
                                 encoding='utf-8')
         except UnicodeDecodeError:
-            df = pd.read_csv("Data/"+filename,
+            df = pd.read_csv(Path(__file__).parent / "Data" / filename,
                                 quotechar='"',
                                 delimiter=',',
                                 encoding='latin')
 
         if len(df.keys()) == 1:
             try:
-                df = pd.read_csv("Data/"+filename,
+                df = pd.read_csv(Path(__file__).parent / "Data" / filename,
                                     quotechar='"',
                                     delimiter=';',
                                     encoding='utf-8')
             except UnicodeDecodeError:
-                df = pd.read_csv("Data/"+filename,
+                df = pd.read_csv(Path(__file__).parent / "Data" / filename,
                                     quotechar='"',
                                     delimiter=';',
                                     encoding='latin')
@@ -162,13 +160,13 @@ class class_plotting:
 
         # import os
         try:
-            os.remove('Figures/VariableData.html')
+            os.remove(Path(__file__).parent / "Figures" / 'VariableData.html')
         except:
             3
         def html_w(typ):
             return '<html> '+typ+' <p style="font-family: Arial">'
 
-        with open('Figures/VariableData.html', 'a') as f:
+        with open(Path(__file__).parent / "Figures" / 'VariableData.html', 'a') as f:
             f.write(html_w('<h1>')+'Variable data</p></h1>')
             f.write(html_w('<body>')+'This page contains the data for the a selection of variables from the ELEVATE project</p></body>')
             f.write(fig.to_html(full_html=False, include_plotlyjs='cdn'))
@@ -276,15 +274,15 @@ class class_plotting:
 
         # import os
         try:
-            os.remove('Figures/VariableData_norm.html')
+            os.remove(Path(__file__).parent / "Figures" / 'VariableData_norm.html')
         except:
             3
         def html_w(typ):
             return '<html> '+typ+' <p style="font-family: Arial">'
 
-        with open('Figures/VariableData_norm.html', 'a') as f:
+        with open(Path(__file__).parent / "Figures" / 'VariableData_norm.html', 'a') as f:
             f.write(html_w('<h1>')+'Variable data (normalized)</p></h1>')
-            f.write(html_w('<body>')+'This page contains the data for the a selection of variables from the ELEVATE project. All data is normalized to the 2015 value to make regional aggregation differences comparable.</p></body>')
+            f.write(html_w('<body>')+'This page contains the data for the a selection of variables from the ELEVATE project. All data is normalized to the 2015 value to make regional aggregation differences comparable (for GEM-E3 this is 2017 because of availability).</p></body>')
             f.write(fig.to_html(full_html=False, include_plotlyjs='cdn'))
 
     def plot_indicators(self):
@@ -481,13 +479,13 @@ class class_plotting:
             fig.update_layout(height=600, width=1600, template='plotly_white')
             figs.append(fig)
         try:
-            os.remove('Figures/Indicators.html')
+            os.remove(Path(__file__).parent / "Figures" / 'Indicators.html')
         except:
             3
         def html_w(typ):
             return '<html> '+typ+' <p style="font-family: Arial">'
 
-        with open('Figures/Indicators.html', 'a') as f:
+        with open(Path(__file__).parent / "Figures" / 'Indicators.html', 'a') as f:
             f.write(html_w('<h1>')+'Indicators</p></h1>')
             f.write(html_w('<body>')+'This page contains the results of the indicators from the ELEVATE poject. The ELV-SSP2-NDC-D0 scenario is used here (together with your own scenario). Please note that in some plots, the panels have similar axes, but not in all of them.</p></body>')
     

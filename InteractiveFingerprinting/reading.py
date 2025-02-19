@@ -31,7 +31,11 @@ class class_reading:
         dummy['Time'] = np.array(dummy['Time'].astype(int))
         dummy = dummy.set_index(["Model", "Scenario", "Region", "Variable", "Time"])
         xr_elevate_reference = xr.Dataset.from_dataframe(dummy)
-        xr_elevate_reference = xr_elevate_reference.reindex({'Time': np.arange(2010, 2101, 10)})
+        xr_elevate_reference = xr_elevate_reference.reindex(Time = np.arange(2005, 2101))
+
+        # set Model = "GEM-E3_V2023" entries for 2015 to the average across other models (because it is missing)
+        # xr_data_new.loc[dict(Model="GEM-E3_V2023", Time=2015)] = xr_data_new.mean(dim='Model').loc[dict(Time=2015)]
+        xr_elevate_reference.loc[dict(Model="GEM-E3_V2023", Time=2015)] = xr_elevate_reference.loc[dict(Model="GEM-E3_V2023", Time=2017)]
 
         self.xr_data = xr_elevate_reference.reindex(Time = np.arange(2005, 2101))
         self.xr_data = self.xr_data.interpolate_na(dim="Time", method="linear")
@@ -52,12 +56,12 @@ class class_reading:
         self.xr_data = xr_data_new
         self.xr_data.to_netcdf("Data/xr_variables_reference.nc")
 
-    def read_data_online(self):
+    def read_data_online(self): # This is depreciated! Old pyam version. Should be migrated later using the ixmp4 package.
         print('- Reading reference data from the scenario database')
         with open(self.path_current / "database_credentials.yaml", "r") as stream:
             self.settings_db = yaml.load(stream, Loader=yaml.Loader)
         # Get reference scenarios: ELEVATE NDC scenarios from global models
-        self.df_reference = pyam.read_iiasa(self.settings['database']['elevate']['name'], # This is depreciated! Old pyam version. Should be migrated later using the ixmp4 package.
+        self.df_reference = pyam.read_iiasa(self.settings['database']['elevate']['name'],
                                           model=self.settings['models'],
                                           scenario=self.settings['scenarios'],
                                           variable=self.settings['required_variables'],
@@ -100,24 +104,24 @@ class class_reading:
 
         # Read data from the csv file
         try:
-            df = pd.read_csv("Data/"+filename,
+            df = pd.read_csv(self.path_current / "Data" / filename,
                                 quotechar='"',
                                 delimiter=',',
                                 encoding='utf-8')
         except UnicodeDecodeError:
-            df = pd.read_csv("Data/"+filename,
+            df = pd.read_csv(self.path_current / "Data" / filename,
                                 quotechar='"',
                                 delimiter=',',
                                 encoding='latin')
 
         if len(df.keys()) == 1:
             try:
-                df = pd.read_csv("Data/"+filename,
+                df = pd.read_csv(self.path_current / "Data" / filename,
                                     quotechar='"',
                                     delimiter=';',
                                     encoding='utf-8')
             except UnicodeDecodeError:
-                df = pd.read_csv("Data/"+filename,
+                df = pd.read_csv(self.path_current / "Data" / filename,
                                     quotechar='"',
                                     delimiter=';',
                                     encoding='latin')

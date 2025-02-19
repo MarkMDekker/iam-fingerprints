@@ -20,7 +20,7 @@ class class_calculation:
 
     def __init__(self, data):
         print("STARTING CALCULATIONS")
-        with open("config.yaml", "r") as stream:
+        with open(Path(__file__).parent / "config.yaml", "r") as stream:
             self.settings = yaml.load(stream, Loader=yaml.Loader)
         self.xr_data = data.sel(Region=self.settings['regions'])
         self.percred = float(self.settings['params']['percred'])
