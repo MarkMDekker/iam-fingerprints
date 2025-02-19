@@ -33,8 +33,7 @@ class class_reading:
         xr_elevate_reference = xr.Dataset.from_dataframe(dummy)
         xr_elevate_reference = xr_elevate_reference.reindex(Time = np.arange(2005, 2101))
 
-        # set Model = "GEM-E3_V2023" entries for 2015 to the average across other models (because it is missing)
-        # xr_data_new.loc[dict(Model="GEM-E3_V2023", Time=2015)] = xr_data_new.mean(dim='Model').loc[dict(Time=2015)]
+        # set Model = "GEM-E3_V2023" entries for 2015 to its 2017 value as a means of extrapolation -> this is used for the normalization in the plots.
         xr_elevate_reference.loc[dict(Model="GEM-E3_V2023", Time=2015)] = xr_elevate_reference.loc[dict(Model="GEM-E3_V2023", Time=2017)]
 
         self.xr_data = xr_elevate_reference.reindex(Time = np.arange(2005, 2101))
