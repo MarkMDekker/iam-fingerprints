@@ -20,14 +20,15 @@ class class_reading:
 
     def __init__(self):
         print("STARTING READING")
-        with open("config.yaml", "r") as stream:
+        self.path_current = Path(__file__).parent
+        with open(self.path_current / "config.yaml", "r") as stream:
             self.settings = yaml.load(stream, Loader=yaml.Loader)
 
     def read_data_online(self):
         print('- Reading reference data from the scenario database')
-        with open("database_credentials.yaml", "r") as stream:
+        with open(self.path_current / "database_credentials.yaml", "r") as stream:
             self.settings_db = yaml.load(stream, Loader=yaml.Loader)
-        # Reference: ELEVATE NDC scenarios from global models
+        # Get reference scenarios: ELEVATE NDC scenarios from global models
         self.df_reference = pyam.read_iiasa(self.settings['database']['elevate']['name'],
                                           model=self.settings['models'],
                                           scenario=self.settings['scenarios'],
