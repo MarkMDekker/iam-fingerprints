@@ -35,7 +35,7 @@ from plotting import class_plotting
 # =========================================================== #
 
 reader = class_reading()
-reader.create_reference_from_local()
+# reader.create_reference_from_local() # Don't use this line if you already have been provided the reference data
 reader.read_data_local()
 
 # =========================================================== #
