@@ -23,13 +23,41 @@ class class_reading:
         self.path_current = Path(__file__).parent
         with open(self.path_current / "config.yaml", "r") as stream:
             self.settings = yaml.load(stream, Loader=yaml.Loader)
+    
+    def create_reference_from_local(self):
+        df_elevate_reference = pd.read_csv(self.path_current / "Data" / "elevate-internal_snapshot_1739970396.csv")[:-1]
+        df_elevate_reference = df_elevate_reference.drop(['Unit'], axis=1)
+        dummy = df_elevate_reference.melt(id_vars=["Model", "Scenario", "Region", "Variable"], var_name="Time", value_name="Value")
+        dummy['Time'] = np.array(dummy['Time'].astype(int))
+        dummy = dummy.set_index(["Model", "Scenario", "Region", "Variable", "Time"])
+        xr_elevate_reference = xr.Dataset.from_dataframe(dummy)
+        xr_elevate_reference = xr_elevate_reference.reindex({'Time': np.arange(2010, 2101, 10)})
+
+        self.xr_data = xr_elevate_reference.reindex(Time = np.arange(2005, 2101))
+        self.xr_data = self.xr_data.interpolate_na(dim="Time", method="linear")
+        available_var = [x for x in self.settings['required_variables'] if x in self.xr_data['Variable'].values]
+        self.xr_data_raw = self.xr_data
+        self.xr_data_raw_sel = self.xr_data.sel(Scenario=self.settings['scenarios'],
+                                                Model=self.settings['models'],
+                                                Variable=available_var)
+        xr_datas = []
+        for i in list(self.settings['regional_mapping'].keys()):
+            regs = np.intersect1d(self.xr_data_raw_sel.Region, self.settings['regional_mapping'][i])
+            xr_datas.append(self.xr_data_raw_sel.sel(Region=regs).sum(dim='Region').expand_dims({'Region': [i]}))
+        xr_data_new = xr.concat(xr_datas, dim='Region')
+
+        # entries of zero fill with nan
+        xr_data_new = xr_data_new.where(xr_data_new != 0, np.nan)
+        xr_data_new = xr_data_new.transpose('Model', 'Scenario', 'Region', 'Variable', 'Time')
+        self.xr_data = xr_data_new
+        self.xr_data.to_netcdf("Data/xr_variables_reference.nc")
 
     def read_data_online(self):
         print('- Reading reference data from the scenario database')
         with open(self.path_current / "database_credentials.yaml", "r") as stream:
             self.settings_db = yaml.load(stream, Loader=yaml.Loader)
         # Get reference scenarios: ELEVATE NDC scenarios from global models
-        self.df_reference = pyam.read_iiasa(self.settings['database']['elevate']['name'],
+        self.df_reference = pyam.read_iiasa(self.settings['database']['elevate']['name'], # This is depreciated! Old pyam version. Should be migrated later using the ixmp4 package.
                                           model=self.settings['models'],
                                           scenario=self.settings['scenarios'],
                                           variable=self.settings['required_variables'],
