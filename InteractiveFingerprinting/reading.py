@@ -9,7 +9,6 @@ import pandas as pd
 import numpy as np
 import xarray as xr
 import yaml
-import pyam
 
 # =========================================================== #
 # CLASS OBJECT
@@ -55,46 +54,49 @@ class class_reading:
         self.xr_data = xr_data_new
         self.xr_data.to_netcdf("Data/xr_variables_reference.nc")
 
-    def read_data_online(self): # This is depreciated! Old pyam version. Should be migrated later using the ixmp4 package.
-        print('- Reading reference data from the scenario database')
-        with open(self.path_current / "database_credentials.yaml", "r") as stream:
-            self.settings_db = yaml.load(stream, Loader=yaml.Loader)
-        # Get reference scenarios: ELEVATE NDC scenarios from global models
-        self.df_reference = pyam.read_iiasa(self.settings['database']['elevate']['name'],
-                                          model=self.settings['models'],
-                                          scenario=self.settings['scenarios'],
-                                          variable=self.settings['required_variables'],
-                                          creds="database_credentials.yaml")
-        self.xr_reference = self.df_reference.data.set_index(['model',
-                                                                'scenario',
-                                                                'region',
-                                                                'variable',
-                                                                'year']).to_xarray().drop_vars(['unit'])
-        self.xr_data = xr.merge([self.xr_reference])
-        self.xr_data = self.xr_data.rename({'variable': 'Variable',
-                                            'region': 'Region',
-                                            'model': 'Model',
-                                            'scenario': 'Scenario',
-                                            'year': 'Time',
-                                            'value': 'Value'})
-        self.xr_data = self.xr_data.reindex(Time = np.arange(2005, 2101))
-        self.xr_data = self.xr_data.interpolate_na(dim="Time", method="linear")
-        available_var = [x for x in self.settings['required_variables'] if x in self.xr_data['Variable'].values]
-        self.xr_data_raw = self.xr_data
-        self.xr_data_raw_sel = self.xr_data.sel(Scenario=self.settings['scenarios'],
-                                                Model=self.settings['models'],
-                                                Variable=available_var)
-        xr_datas = []
-        for i in list(self.settings['regional_mapping'].keys()):
-            regs = np.intersect1d(self.xr_data_raw_sel.Region, self.settings['regional_mapping'][i])
-            xr_datas.append(self.xr_data_raw_sel.sel(Region=regs).sum(dim='Region').expand_dims({'Region': [i]}))
-        xr_data_new = xr.concat(xr_datas, dim='Region')
+    # =========================================================== #
+    # This is depreciated! Old pyam version. Should be migrated later using the ixmp4 package.
+    # =========================================================== #
+    # def read_data_online(self): 
+    #     print('- Reading reference data from the scenario database')
+    #     with open(self.path_current / "database_credentials.yaml", "r") as stream:
+    #         self.settings_db = yaml.load(stream, Loader=yaml.Loader)
+    #     # Get reference scenarios: ELEVATE NDC scenarios from global models
+    #     self.df_reference = pyam.read_iiasa(self.settings['database']['elevate']['name'],
+    #                                       model=self.settings['models'],
+    #                                       scenario=self.settings['scenarios'],
+    #                                       variable=self.settings['required_variables'],
+    #                                       creds="database_credentials.yaml")
+    #     self.xr_reference = self.df_reference.data.set_index(['model',
+    #                                                             'scenario',
+    #                                                             'region',
+    #                                                             'variable',
+    #                                                             'year']).to_xarray().drop_vars(['unit'])
+    #     self.xr_data = xr.merge([self.xr_reference])
+    #     self.xr_data = self.xr_data.rename({'variable': 'Variable',
+    #                                         'region': 'Region',
+    #                                         'model': 'Model',
+    #                                         'scenario': 'Scenario',
+    #                                         'year': 'Time',
+    #                                         'value': 'Value'})
+    #     self.xr_data = self.xr_data.reindex(Time = np.arange(2005, 2101))
+    #     self.xr_data = self.xr_data.interpolate_na(dim="Time", method="linear")
+    #     available_var = [x for x in self.settings['required_variables'] if x in self.xr_data['Variable'].values]
+    #     self.xr_data_raw = self.xr_data
+    #     self.xr_data_raw_sel = self.xr_data.sel(Scenario=self.settings['scenarios'],
+    #                                             Model=self.settings['models'],
+    #                                             Variable=available_var)
+    #     xr_datas = []
+    #     for i in list(self.settings['regional_mapping'].keys()):
+    #         regs = np.intersect1d(self.xr_data_raw_sel.Region, self.settings['regional_mapping'][i])
+    #         xr_datas.append(self.xr_data_raw_sel.sel(Region=regs).sum(dim='Region').expand_dims({'Region': [i]}))
+    #     xr_data_new = xr.concat(xr_datas, dim='Region')
 
-        # entries of zero fill with nan
-        xr_data_new = xr_data_new.where(xr_data_new != 0, np.nan)
-        xr_data_new = xr_data_new.transpose('Model', 'Scenario', 'Region', 'Variable', 'Time')
-        self.xr_data = xr_data_new
-        self.xr_data.to_netcdf("Data/xr_variables_reference.nc")
+    #     # entries of zero fill with nan
+    #     xr_data_new = xr_data_new.where(xr_data_new != 0, np.nan)
+    #     xr_data_new = xr_data_new.transpose('Model', 'Scenario', 'Region', 'Variable', 'Time')
+    #     self.xr_data = xr_data_new
+    #     self.xr_data.to_netcdf("Data/xr_variables_reference.nc")
 
     def read_data_local(self):
         print('- Reading reference and your own scenario from local data and saving to xr_variables.nc')

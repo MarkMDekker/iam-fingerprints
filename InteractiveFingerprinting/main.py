@@ -3,32 +3,14 @@
 # Packages that we need
 # =========================================================== #
 
-from pathlib import Path
-from tqdm import tqdm
-import pandas as pd
-import numpy as np
 import xarray as xr
-import yaml
-import pyam
-import warnings
-import importlib
-import plotly.express as px
-import plotly.graph_objects as go
-from plotly.subplots import make_subplots
-import os
-warnings.filterwarnings("ignore")
-
-import reading
-import calculations
-import plotting
-
-importlib.reload(reading)
-importlib.reload(calculations)
-importlib.reload(plotting)
-
 from reading import class_reading
 from calculations import class_calculation
 from plotting import class_plotting
+
+# This is generally not recommended, but for the workshop we are removing all warnings that arise from empty averages
+import warnings
+warnings.filterwarnings("ignore") 
 
 # =========================================================== #
 # READ DATA
