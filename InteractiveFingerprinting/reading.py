@@ -129,12 +129,14 @@ class class_reading:
 
         # Remove Unit column
         df2 = df.drop('Unit', axis=1)
+        df2 = df2[df2.Variable.isin(self.settings['required_variables'])]
+        df3 = df2[df2['Model'].notna()].reset_index(drop=True)
 
         # Transform the columns with years into a single column called Time
-        df2 = pd.melt(df2, id_vars=['Model', 'Scenario', 'Region', 'Variable'], var_name='Time', value_name='Value')
+        df4 = pd.melt(df3, id_vars=['Model', 'Scenario', 'Region', 'Variable'], var_name='Time', value_name='Value')
 
         # Transform into xarray object with coordinates Model, Scenario, Region and Variable
-        xr_data = df2.set_index(['Model', 'Scenario', 'Region', 'Variable', 'Time']).to_xarray()
+        xr_data = df4.set_index(['Model', 'Scenario', 'Region', 'Variable', 'Time']).to_xarray()
 
         # Change the type of the Time coordinate to integer
         xr_data = xr_data.assign_coords(Time=xr_data.Time.astype(int))
@@ -146,15 +148,19 @@ class class_reading:
         xr_data = xr_data.assign(Value=xr_data.Value.astype(float))
 
         # Set scenario name
-        if np.array(xr_data.Model)[0] == 'BLUES 2.0':
+        if np.array(xr_data.Model)[0] == 'BLUES 2.0' or np.array(xr_data.Model)[0] == '':
             xr_data = xr_data.sel(Scenario=['ELV-SSP2-NDC-D0-N'])
             xr_data = xr_data.assign_coords(Scenario=['ELV-SSP2-NDC-D0'])
         else:
-            try: # if there is only one scenario
+            try:
                 xr_data = xr_data.assign_coords(Scenario=['ELV-SSP2-NDC-D0'])
-            except ValueError: # if there are more, use the first
-                xr_data = xr_data.sel(Scenario=[np.array(xr_data.Scenario)[0]])
-                xr_data = xr_data.assign_coords(Scenario=['ELV-SSP2-NDC-D0'])
+            except:
+                try:
+                    xr_data = xr_data.assign_coords(Scenario=['ELV-SSP2-NDC-D0-N'])
+                    xr_data = xr_data.assign_coords(Scenario=['ELV-SSP2-NDC-D0'])
+                except:
+                    xr_data = xr_data.sel(Scenario=[np.array(xr_data.Scenario)[0]])
+                    xr_data = xr_data.assign_coords(Scenario=['ELV-SSP2-NDC-D0'])
 
         # Some reindexing of time
         xr_data = xr_data.reindex(Time = np.arange(2005, 2101)).interpolate_na(dim="Time", method="linear")
