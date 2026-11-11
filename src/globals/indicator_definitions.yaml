@@ -1,0 +1,150 @@
+indicator:
+  RAI:
+    name: Relative Abatement Index
+    description: CO2 emissions (E&IP) reductions compared to the current-policies scenario (in benchmark year)
+    category: Responsiveness
+  
+  RAIg:
+    name: Relative Abatement Index (GHG)
+    description: GHG emissions reductions compared to the current-policies scenario (in benchmark year)
+    category: Responsiveness
+  
+  CIr:
+    name: Carbon Intensity Reduction
+    description: CO2 emissions (E&IP) over final energy, benchmark year compared to 2025
+    category: Mitigation strategy
+  
+  EIr:
+    name: Energy Intensity Reduction
+    description: Final energy over GDP PPP, benchmark year compared to 2025
+    category: Mitigation strategy
+
+  CC:
+    name: Cumulative Carbon Capture
+    description: Cumulative carbon capture between 2025 and benchmark year
+    category: Mitigation strategy
+
+  NCmit:
+    name: Change in non-CO2 mitigation
+    description: Non-CO2 reduction fraction (of total GHG reduction) in benchmark year, difference with current policies.
+    category: Mitigation strategy
+
+  TI:
+    name: Transformation Index
+    description: Sum of changes per primary energy source (0-2 index) between 2025 and benchmark year
+    category: Responsiveness
+
+  In1:
+    name: Timescale early mitigation
+    description: Number of years before 66% of (Current-Policies) CO2 emissions are reduced
+    category: Responsiveness
+  
+  In2:
+    name: Inertia of shock
+    description: Cumulative emission difference between C400-lin and C0to400-lin over 2040-2100, divided by emission gap in 2040
+    category: Responsiveness
+  
+  FFR:
+    name: Fossil Fuel Reduction
+    description: Reduction (%) of primary fossil use between 2025 and benchmark year, difference with current policies
+    category: Mitigation strategy
+  
+  CumED:
+    name: Cumulative Energy Demand
+    description: Cumulative final energy between 2025 and benchmark year
+    category: Energy demand
+
+  El_Ind:
+    name: Electrification in Industry
+    description: Electricity share in final energy for industry in benchmark year
+    category: Energy demand
+
+  El_Trans:
+    name: Electrification in Transport
+    description: Electricity share in final energy for transport in benchmark year
+    category: Energy demand
+  
+  El_Build:
+    name: Electrification in Buildings
+    description: Electricity share in final energy for buildings sector in benchmark year
+    category: Energy demand
+  
+  Pr_Coal:
+    name: Fraction Primary Coal
+    description: Share of coal in primary energy mix in benchmark year
+    category: Energy supply
+  
+  Pr_Oil:
+    name: Fraction Primary Oil
+    description: Share of oil in primary energy mix in benchmark year
+    category: Energy supply
+  
+  Pr_Gas:
+    name: Fraction Primary Gas
+    description: Share of gas in primary energy mix in benchmark year
+    category: Energy supply
+  
+  Pr_Solar:
+    name: Fraction Primary Solar
+    description: Share of solar in primary energy mix in benchmark year
+    category: Energy supply
+  
+  Pr_Wind:
+    name: Fraction Primary Wind
+    description: Share of wind in primary energy mix in benchmark year
+    category: Energy supply
+  
+  Pr_Bio:
+    name: Fraction Primary Biomass
+    description: Share of bioenergy in primary energy mix in benchmark year
+    category: Energy supply
+  
+  Pr_Nuclear:
+    name: Fraction Primary Nuclear
+    description: Share of nuclear in primary energy mix in benchmark year
+    category: Energy supply
+  
+  CAV:
+    name: Cost Per Abatement Value
+    description: Policy costs (any variable) divided by marginal abatement (in GHG emissions) times average carbon price (2030-benchmark year)
+    category: Responsiveness
+  
+  LU_CO2:
+    name: Cumulative Land Use CO2 Emissions
+    description: Cumulative AFOLU CO2 emissions (2030-benchmark year)
+    category: Land use
+  
+  LU_CDR:
+    name: Land based CDR
+    description: Cumulative land-based sequestration (2030-benchmark year)
+    category: Land use
+  
+  NC_AFOLU:
+    name: Land Use non-CO2 Mitigation
+    description: Non-CO2 AFOLU reduction (defined as difference with current politcies) as share of total AFOLU GHG reduction in benchmark year
+    category: Land use
+  
+  LandCover:
+    name: Human appropriated land
+    description: Land cover for cropland, pasture and built-up area as share of total land cover in benchmark year
+    category: Land use
+  
+  Yield:
+    name: Crop Yield Change
+    description: Yield change (2025 - benchmark year) of cereals, energy, oil, sugar and other crops
+    category: Land use
+  
+  AgProd:
+    name: Agricultural Production Change
+    description: Change in total agricultural production (2025 - benchmark year) as fraction of the 2025 level
+    category: Land use
+  
+  Food:
+    name: Food Availability Change
+    description: Change in per capita food availability (2025 - benchmark year) as fraction of the 2025 level
+    category: Land use
+  
+  FoodPrice:
+    name: Food Price
+    description: Price of food products as an index in the benchmark year
+    category: Land use

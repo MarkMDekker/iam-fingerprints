@@ -8,6 +8,7 @@ InteractiveFingerprinting/Data/MyScenario*
 InteractiveFingerprinting/Figures/*
 InteractiveFingerprinting/database_credentials.yaml
 src/globals/database_credentials.yaml
+data/iamc-diagnostics/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
